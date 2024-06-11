@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Read MIDI File</title>
+</head>
+
+<body>
+    <input type="file" id="midiInput" accept=".mid">
+    <script>
+        document.getElementById('midiInput').addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+                const arrayBuffer = e.target.result;
+                // MIDI 파일을 처리하는 함수를 호출합니다.
+                processMidi(arrayBuffer);
+            };
+
+            reader.readAsArrayBuffer(file);
+        });
+
+        function processMidi(arrayBuffer) {
+            // arrayBuffer를 사용하여 MIDI 파일을 처리합니다.
+            // 여기서는 간단히 콘솔에 출력하는 것으로 대체합니다.
+            console.log(arrayBuffer);
+        }
+    </script>
+</body>
+
+</html>
