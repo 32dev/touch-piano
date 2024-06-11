@@ -29,7 +29,7 @@
     <script>
         // load a midi file
         let list = [];
-        MidiConvert.load("test2.mid", function (midi) {
+        MidiConvert.load("test3.mid", function (midi) {
             midi.tracks[0].notes.forEach(note => {
                 let keyNote = noteToKey(note.midi).toLocaleLowerCase();
                 let time = note.time;
@@ -37,7 +37,9 @@
                 try {
                     key = keyMap[keyNote];
                     console.log(keyMap[keyNote], time, note.midi);
-                    list.push({ key: keyMap[keyNote], time: time, midi: note.midi });
+                    if (key != undefined) {
+                        list.push({ key: keyMap[keyNote], time: time, midi: note.midi });
+                    }
                 } catch (e) {
                     console.log(e);
                 }
@@ -48,7 +50,7 @@
                 let keyElement = document.createElement('div');
                 keyElement.className = 'key';
                 keyElement.innerHTML = list[i].key;
-                keyElement.style = `position:absolute;display:inline-block;margin-top:${list[i].midi * 3}px;margin-left:${list[i].time * 50}px`
+                keyElement.style = `position:absolute;display:inline-block;margin-top:${list[i].midi * 7.5}px;margin-left:${list[i].time * 50}px`
                 root.appendChild(keyElement);
                 setTimeout(function () {
                     keyElement.style.backgroundColor = 'black';
