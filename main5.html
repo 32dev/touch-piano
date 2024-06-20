@@ -37,18 +37,37 @@
         td {
             border: 1px solid black;
         }
+        #root{
+            position:absolute;
+            right:0;
+            width:300px;
+            height:800px;
+            border:1px solid black;
+            overflow-y:scroll;
+            bottom:0;
+        }
     </style>
 </head>
 
 <body>
     <button onclick="start()">start</button>
     <div id="root">
-
+        
     </div>
     <script src="noteTokey.js"></script>
     <script src="map.js"></script>
     <script>
         let synth = null;
+        function p(list, tr, time) {
+            setTimeout(function () {
+                synth.triggerAttackRelease(list, '32n');
+                tr.focus();
+                tr.scrollIntoView();
+                tr.style.backgroundColor = 'black';
+                tr.style.color = 'white';
+            }, time);
+
+        }
         function start() {
             if (synth == null) {
                 synth = new Tone.PolySynth().toDestination();
@@ -59,6 +78,18 @@
                     voice: Tone.Synth
                 });
             }
+            let tr = document.getElementsByTagName('tr');
+            for (let idx = 0; idx < tr.length; idx++) {
+                let tds = tr[idx].getElementsByTagName('td');
+                console.log(tds);
+                let list = [];
+                for (let i = 1; i < tds.length; i++) {
+                    list.push(tds[i].innerHTML);
+                }
+                p(list, tr[idx], parseFloat(tds[0].innerHTML) * 1000);
+                console.log(list);
+            }
+
         }
         // load a midi file
         let list = [];
@@ -92,9 +123,9 @@
                         console.log(key * 1000);
                         let tr = document.createElement('tr');
                         console.log("{")
-                        // let temp = document.createElement('td');
-                        // temp.innerHTML = key;
-                        // tr.appendChild(temp);
+                        let temp = document.createElement('td');
+                        temp.innerHTML = key;
+                        tr.appendChild(temp);
                         arr.forEach(value => {
                             console.log(value);
                             let td = document.createElement('td');
@@ -114,25 +145,26 @@
                 root.appendChild(table);
             })
         let idx = 0;
-        document.body.addEventListener('keydown', function (e) {
+        // document.body.addEventListener('keydown', function (e) {
 
-            let tr = document.getElementsByTagName('tr');
-            tr[idx].style.backgroundColor = 'black';
-            tr[idx].style.color = 'white';
-            let tds = tr[idx].getElementsByTagName('td');
-            console.log(tds);
-            let list = [];
-            for (let i = 0; i < tds.length; i++) {
-                list.push(tds[i].innerHTML);
-            }
-            console.log(list);
-            if (idx >= 1) {
-                tr[idx - 1].focus();
-                tr[idx - 1].scrollIntoView();
-            }
-            synth.triggerAttackRelease(list, '8n');
-            idx++;
-        });
+        //     let tr = document.getElementsByTagName('tr');
+        //     tr[idx].style.backgroundColor = 'black';
+        //     tr[idx].style.color = 'white';
+        //     let tds = tr[idx].getElementsByTagName('td');
+        //     console.log(tds);
+        //     let list = [];
+        //     for (let i = 0; i < tds.length; i++) {
+        //         list.push(tds[i].innerHTML);
+        //     }
+        //     console.log(list);
+        //     if (idx >= 1) {
+        //         tr[idx - 1].focus();
+        //         tr[idx - 1].scrollIntoView();
+        //     }
+        //     synth.triggerAttackRelease(list, '8n');
+        //     idx++;
+        // });
+
     </script>
 </body>
 
