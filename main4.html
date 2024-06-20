@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <script src="https://cdn.jsdelivr.net/npm/midiconvert@0.4.7/build/MidiConvert.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/15.1.2/Tone.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+        }
+
+        table,
+        tr,
+        td {
+            border-collapse: collapse;
+
+        }
+
+        table {
+            position: relative;
+        }
+
+        tr {
+            position: absolute;
+        }
+
+        td {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+
+<body>
+    <button onclick="start()">start</button>
+    <div id="root">
+
+    </div>
+    <script src="noteTokey.js"></script>
+    <script src="map.js"></script>
+    <script>
+        let synth = null;
+        function start() {
+            if (synth == null) {
+                synth = new Tone.PolySynth().toDestination();
+                synth.set({
+                    polyphony: 4,
+                    volume: 0,
+                    detune: 0,
+                    voice: Tone.Synth
+                });
+            }
+        }
+        // load a midi file
+        let list = [];
+        let map =
+            MidiConvert.load("Odysseus.mid", function (midi) {
+                midi.tracks[0].notes.forEach(note => {
+                    let keyNote = noteToKey(note.midi).toLocaleLowerCase();
+                    let time = note.time;
+                    let key = '';
+                    try {
+                        if (key != undefined) {
+                            list.push({ key: keyMap[keyNote], keyNote: keyNote, time: time, midi: note.midi });
+                        }
+                    } catch (e) {
+                        console.log(e);
+                    }
+                });
+                console.log(list);
+                let obj = list.reduce((acc, element) => {
+                    if (!acc[element.time]) {
+                        acc[element.time] = [];  // Initialize the array if it doesn't exist
+                    }
+                    acc[element.time].push(element.keyNote);  // Add the name to the array
+                    return acc;
+                }, {});
+                console.log(obj);
+                let table = document.createElement('table');
+                for (const key in obj) {
+                    if (obj.hasOwnProperty(key)) {
+                        const arr = obj[key];
+                        console.log(key * 1000);
+                        let tr = document.createElement('tr');
+                        console.log("{")
+                        // let temp = document.createElement('td');
+                        // temp.innerHTML = key;
+                        // tr.appendChild(temp);
+                        arr.forEach(value => {
+                            console.log(value);
+                            let td = document.createElement('td');
+                            if (value.includes("#")) {
+                                td.innerHTML = value.replace("#", '') + 's'
+                            } else {
+                                td.innerHTML = value;
+                            }
+                            tr.style.top = key * 150 + 'px';
+                            tr.appendChild(td);
+                        });
+                        table.appendChild(tr);
+                        console.log("}")
+                    }
+                }
+                let root = document.getElementById('root');
+                root.appendChild(table);
+            })
+        let idx = 0;
+        document.body.addEventListener('keydown', function (e) {
+
+            let tr = document.getElementsByTagName('tr');
+            tr[idx].style.backgroundColor = 'black';
+            tr[idx].style.color = 'white';
+            let tds = tr[idx].getElementsByTagName('td');
+            console.log(tds);
+            let list = [];
+            for (let i = 0; i < tds.length; i++) {
+                list.push(tds[i].innerHTML);
+            }
+            console.log(list);
+            if (idx >= 1) {
+                tr[idx - 1].focus();
+                tr[idx - 1].scrollIntoView();
+            }
+            synth.triggerAttackRelease(list, '16n');
+            idx++;
+        });
+    </script>
+</body>
+
+</html>

@@ -29,6 +29,7 @@
     <script>
         // load a midi file
         let list = [];
+        let map = new Map();
         MidiConvert.load("test3.mid", function (midi) {
             midi.tracks[0].notes.forEach(note => {
                 let keyNote = noteToKey(note.midi).toLocaleLowerCase();
@@ -51,15 +52,16 @@
                 keyElement.className = 'key';
                 keyElement.innerHTML = list[i].key;
                 keyElement.style = `position:absolute;display:inline-block;margin-top:${list[i].midi * 7.5}px;margin-left:${list[i].time * 50}px`
+                map.set(list[i].time, list[i].midi);
                 root.appendChild(keyElement);
                 setTimeout(function () {
                     keyElement.style.backgroundColor = 'black';
                     keyElement.style.color = 'white';
                 }, list[i].time * 1000)
             }
+            console.log(map);
         })
         let idx = 0;
-
     </script>
 </body>
 
